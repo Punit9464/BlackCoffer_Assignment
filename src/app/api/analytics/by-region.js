@@ -4,20 +4,20 @@ import { asyncHandler } from '@/utils/errorHandler.js'
 import analyticsService from '@/services/analyticsService.js'
 
 export default asyncHandler(async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json(ApiResponse.error('Method not allowed', 405))
-  }
+    if (req.method !== 'GET') {
+        return res.status(405).json(ApiResponse.error('Method not allowed', 405))
+    }
 
-  const { error, value: filters } = validateFilters(req.query)
-  
-  if (error) {
-    return res.status(400).json(ApiResponse.error('Invalid filters', 400, error.details))
-  }
+    const { error, value: filters } = validateFilters(req.query)
 
-  const regionData = await analyticsService.getIntensityByRegion(filters)
-  
-  return res.status(200).json(ApiResponse.success(
-    regionData,
-    'Regional analysis retrieved successfully'
-  ))
+    if (error) {
+        return res.status(400).json(ApiResponse.error('Invalid filters', 400, error.details))
+    }
+
+    const regionData = await analyticsService.getIntensityByRegion(filters)
+
+    return res.status(200).json(ApiResponse.success(
+        regionData,
+        'Regional analysis retrieved successfully'
+    ))
 })

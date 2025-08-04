@@ -12,10 +12,10 @@ class InsightService {
 
   async getAllInsights(filters = {}, page = 1, limit = 50) {
     await this.ensureConnection()
-    
+
     const matchStage = this.model.buildMatchStage(filters)
     const skip = (page - 1) * limit
-    
+
     const [data, total] = await Promise.all([
       this.model.find(matchStage)
         .skip(skip)
@@ -24,7 +24,7 @@ class InsightService {
         .lean(),
       this.model.countDocuments(matchStage)
     ])
-    
+
     return {
       data,
       pagination: {
@@ -60,11 +60,11 @@ class InsightService {
 
   async bulkInsertInsights(dataArray) {
     await this.ensureConnection()
-    
+
     try {
-      const result = await this.model.insertMany(dataArray, { 
+      const result = await this.model.insertMany(dataArray, {
         ordered: false,
-        rawResult: true 
+        rawResult: true
       })
       return {
         success: true,
@@ -85,7 +85,7 @@ class InsightService {
 
   async searchInsights(query, filters = {}) {
     await this.ensureConnection()
-    
+
     const matchStage = {
       ...this.model.buildMatchStage(filters),
       $or: [
@@ -95,7 +95,7 @@ class InsightService {
         { source: { $regex: query, $options: 'i' } }
       ]
     }
-    
+
     return await this.model.find(matchStage)
       .limit(20)
       .sort({ relevance: -1, intensity: -1 })
